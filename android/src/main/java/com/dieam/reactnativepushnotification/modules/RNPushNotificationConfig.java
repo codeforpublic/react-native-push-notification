@@ -3,13 +3,14 @@ package com.dieam.reactnativepushnotification.modules;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.os.Bundle;
 import android.util.Log;
 
 class RNPushNotificationConfig {
     private static final String KEY_CHANNEL_NAME = "com.dieam.reactnativepushnotification.notification_channel_name";
     private static final String KEY_CHANNEL_DESCRIPTION = "com.dieam.reactnativepushnotification.notification_channel_description";
+    private static final String KEY_NOTIFICATION_FOREGROUND = "com.dieam.reactnativepushnotification.notification_foreground";
     private static final String KEY_NOTIFICATION_COLOR = "com.dieam.reactnativepushnotification.notification_color";
 
     private static Bundle metadata;
@@ -31,7 +32,10 @@ class RNPushNotificationConfig {
 
     public String getChannelName() {
         try {
-            return metadata.getString(KEY_CHANNEL_NAME);
+            final String name = metadata.getString(KEY_CHANNEL_NAME);
+            if (name != null && name.length() > 0) {
+                return name;
+            }
         } catch (Exception e) {
             Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_NAME + " in manifest. Falling back to default");
         }
@@ -40,13 +44,17 @@ class RNPushNotificationConfig {
     }
     public String getChannelDescription() {
         try {
-            return metadata.getString(KEY_CHANNEL_DESCRIPTION);
+            final String description = metadata.getString(KEY_CHANNEL_DESCRIPTION);
+            if (description != null) {
+                return description;
+            }
         } catch (Exception e) {
             Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_CHANNEL_DESCRIPTION + " in manifest. Falling back to default");
         }
         // Default
         return "";
     }
+
     public int getNotificationColor() {
         try {
             int resourceId = metadata.getInt(KEY_NOTIFICATION_COLOR);
@@ -56,5 +64,15 @@ class RNPushNotificationConfig {
         }
         // Default
         return -1;
+    }
+
+    public boolean getNotificationForeground() {
+        try {
+            return metadata.getBoolean(KEY_NOTIFICATION_FOREGROUND, false);
+        } catch (Exception e) {
+            Log.w(RNPushNotification.LOG_TAG, "Unable to find " + KEY_NOTIFICATION_FOREGROUND + " in manifest. Falling back to default");
+        }
+        // Default
+        return false;
     }
 }
